@@ -21,9 +21,9 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/RandomPage.vue"),
       },
       {
-        name: "pick",
-        path: "pick",
-        component: () => import("@/views/PickPage.vue"),
+        name: "comparison",
+        path: "comparison",
+        component: () => import("@/views/ComparisonPage.vue"),
       },
       {
         name: "saved",

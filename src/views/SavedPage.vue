@@ -20,9 +20,10 @@
           @click="loadConfig(deepUnref(config))"
         >
           {{ config.name }}
+          <ion-note slot="end">{{ config.type }}</ion-note>
           <ion-button
             slot="end"
-            fill="clear"
+            fill="outline"
             @click="
               $event.stopPropagation();
               removeItem(deepUnref(config));
@@ -51,6 +52,7 @@ import {
   IonIcon,
   alertController,
   onIonViewDidEnter,
+  IonNote,
 } from "@ionic/vue";
 import { trash } from "ionicons/icons";
 import { ref } from "vue";

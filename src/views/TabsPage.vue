@@ -9,9 +9,9 @@
             <ion-label>Random</ion-label>
           </ion-tab-button>
 
-          <ion-tab-button tab="pick" href="/tabs/pick">
+          <ion-tab-button tab="comparison" href="/tabs/comparison">
             <ion-icon aria-hidden="true" :icon="ellipse" />
-            <ion-label>Pick</ion-label>
+            <ion-label>Comparison</ion-label>
           </ion-tab-button>
 
           <ion-tab-button tab="saved" href="/tabs/saved">
