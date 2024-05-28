@@ -12,7 +12,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <ExploreContainer name="Tab 3 page" />
+      <ExploreContainer name="This is a placeholder page." />
     </ion-content>
   </ion-page>
 </template>
