@@ -3,6 +3,14 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Random</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="saveConfig">
+            <ion-icon slot="icon-only" :icon="save"></ion-icon
+          ></ion-button>
+          <ion-button @click="roll">
+            <ion-icon slot="icon-only" :icon="dice"></ion-icon
+          ></ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -33,9 +41,6 @@
         <ion-fab-button @click="addItem">
           <ion-icon :icon="add"></ion-icon>
         </ion-fab-button>
-        <ion-fab-button color="success" @click="roll">
-          <ion-icon :icon="dice"></ion-icon>
-        </ion-fab-button>
       </ion-fab>
     </ion-content>
   </ion-page>
@@ -56,14 +61,40 @@ import {
   IonItem,
   IonButton,
   IonNote,
+  onIonViewDidEnter,
 } from "@ionic/vue";
-import { add, dice, trash } from "ionicons/icons";
+import { add, dice, save, trash } from "ionicons/icons";
 import { ref } from "vue";
+import { deepUnref } from "vue-deepunref";
+import { appStorage } from "../utils/storage";
 import { rollItems } from "../utils/roll";
+import { STORAGE_KEYS } from "@/utils/constant";
+import { useRoute } from "vue-router";
+import { AppData, SavedConfig } from "@/utils/app-data";
 
 type Item = { name: string | number; weight: number };
 
+const route = useRoute();
+
 const items = ref<{ name: string | number; weight: number }[]>([]);
+
+onIonViewDidEnter(async () => {
+  if (route.query?.name) {
+    const appData = (await appStorage.get(STORAGE_KEYS.APP_DATA)) as
+      | AppData
+      | undefined;
+    if (!appData) {
+      return;
+    }
+    const config = appData.savedConfigs.find(
+      (config: SavedConfig) => config.name === route.query.name
+    );
+    if (!config) {
+      return;
+    }
+    items.value = deepUnref(config.items) as Item[];
+  }
+});
 
 async function addItem() {
   const alert = await alertController.create({
@@ -145,6 +176,71 @@ async function roll() {
             await alertController.create({
               header: "Rolled items",
               message: rolledItems.map((item) => item.name).join(", "),
+              buttons: ["OK"],
+            })
+          ).present();
+        },
+      },
+    ],
+  });
+  await alert.present();
+}
+
+async function saveConfig() {
+  const alert = await alertController.create({
+    header: "Save the current configuration",
+    inputs: [
+      {
+        name: "name",
+        type: "text",
+        placeholder: "Config Name",
+      },
+    ],
+    buttons: [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Save",
+        role: "confirm",
+        handler: async (data) => {
+          if (!data.name) {
+            await (
+              await alertController.create({
+                header: "Error",
+                message: "Config name is required.",
+                buttons: ["OK"],
+              })
+            ).present();
+            return;
+          }
+          const config = {
+            type: "random",
+            name: data.name,
+            items: deepUnref(items),
+          };
+          const appData = await appStorage.get(STORAGE_KEYS.APP_DATA);
+          if (!appData) {
+            return;
+          }
+          const existingConfig = appData.savedConfigs.find(
+            (savedConfig: SavedConfig) => savedConfig.name === data.name
+          );
+          if (existingConfig) {
+            await (
+              await alertController.create({
+                header: "Error",
+                message: `Config "${data.name}" already exists.`,
+                buttons: ["OK"],
+              })
+            ).present();
+            return;
+          }
+          appData.savedConfigs.push(config);
+          await appStorage.set(STORAGE_KEYS.APP_DATA, appData);
+          await (
+            await alertController.create({
+              header: "Config saved",
               buttons: ["OK"],
             })
           ).present();

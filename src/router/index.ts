@@ -16,16 +16,19 @@ const routes: Array<RouteRecordRaw> = [
         redirect: "/tabs/random",
       },
       {
+        name: "random",
         path: "random",
         component: () => import("@/views/RandomPage.vue"),
       },
       {
+        name: "pick",
         path: "pick",
         component: () => import("@/views/PickPage.vue"),
       },
       {
-        path: "tab3",
-        component: () => import("@/views/Tab3Page.vue"),
+        name: "saved",
+        path: "saved",
+        component: () => import("@/views/SavedPage.vue"),
       },
     ],
   },

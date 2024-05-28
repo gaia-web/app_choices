@@ -17,10 +17,12 @@
     "@capacitor/haptics": "6.0.0",
     "@capacitor/keyboard": "6.0.0",
     "@capacitor/status-bar": "6.0.0",
+    "@ionic/storage": "^4.0.0",
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
     "ionicons": "^7.0.0",
     "vue": "^3.3.0",
+    "vue-deepunref": "^1.0.1",
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
